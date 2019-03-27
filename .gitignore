@@ -1,0 +1,76 @@
+sites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+a
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.confedefine MAXCHR 512 // maximum number of characters supported by shell input
+#define MAXARGS 32 // maximum number of commands supported by shell parser
+
+// Clear shell window using escape sequences
+#define clear() printf("\033[H\033[J")
+
+extern char **environ;
+
+// function prototypes
+int input_prompt(char *cmd_str);
+void get_current_directory();
+void quit_shell();
+int builtin_cmd_handler(char **parsed_input);
+int process_input_string(char *cmd_str, char **parsed_cmds, char **piped_cmds);
+void parse_cmdstr_by_space(char *cmd_str, char **parsed_cmds);
+int parse_cmdstr_by_pipe(char *cmd_str, char **piped_cmds);
+void print_dir(char *path);
+void change_directory(char *path);
+void show_environ();
+void echo_string(char **parsed_input);
+void init_shell_env();
+void shell_man();
+void execute_cmd(char **parsed_cmds);
+
