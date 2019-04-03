@@ -9,6 +9,6 @@
 
 #define MAXLINES 1024
 
-char **read_dictionary(size_t *line_index, char **word_list, char **argv);
+char **read_dictionary(char **string, size_t *string_index, char *dict_fname);
 
 #endif

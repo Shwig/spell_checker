@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
   size_t line_index = 0;      /* index for number of lines in the dictionary FILE */
 
   /* read_dictionary */
-  word_list = read_dictionary(&line_index, word_list, argv);
+  word_list = read_dictionary(word_list, &line_index, argv[1]);  
 
   /* display all words in the word list */
   for (size_t j = 0; j < line_index; j++) {

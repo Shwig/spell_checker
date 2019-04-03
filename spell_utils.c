@@ -1,8 +1,14 @@
 #include "spell.h"
 
 
-/*  */
-char **read_dictionary(size_t *string_index, char **string, char **dict_fname) {
+/* read_dictionary takes in a NULL string that will be used to store pthreads
+   contents of the dictionary file, size_t pointer initalized to zero to keep
+   track of the string index, and the name of the dictionary text file to
+   be coppied. string pointers are dynamically allocated based on the initialtial
+   value of MAXLINES. dictionary file dict_fname is read line by line  and
+   coppied into the input string before returning reference to string pointer.
+   Don't forget to free string before exit.*/
+char **read_dictionary(char **string, size_t *string_index, char *dict_fname) {
 
   FILE *fp = NULL;
   char *read_line = NULL;     /* line read from the dictionary file */
@@ -12,8 +18,8 @@ char **read_dictionary(size_t *string_index, char **string, char **dict_fname) {
 
 
   /* if fopen returns null file not found*/
-  if ((fp = fopen (dict_fname[1], "r")) == NULL) {
-    fprintf(stderr, "File not found err: check that '%s' exist at directory", dict_fname[1]);
+  if ((fp = fopen (dict_fname, "r")) == NULL) {
+    fprintf(stderr, "File not found err: check that '%s' exist at directory", dict_fname);
     exit(EXIT_FAILURE);
   }
 
