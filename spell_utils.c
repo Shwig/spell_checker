@@ -15,6 +15,7 @@ char **read_dictionary(char **string, size_t *string_index, char *dict_fname) {
   size_t buff_size = 0;       /* default buffer size for get_line */
   ssize_t chrs_read = 0;      /* total number of characters read */
   size_t maxlines = MAXLINES; /* allocate initial number of pointer for file of unknown size */
+  // size_t ral_count = 0;
 
 
   /* if fopen returns null file not found*/
@@ -41,6 +42,7 @@ char **read_dictionary(char **string, size_t *string_index, char *dict_fname) {
       realloc */
     if ((*string_index) == maxlines) {
       char **temp = realloc (string, maxlines * 2 * sizeof *string);
+      // ral_count++;
       if (temp == NULL) {
         fprintf(stderr, "err: Reallocation failed");
         exit(EXIT_FAILURE);
@@ -49,6 +51,7 @@ char **read_dictionary(char **string, size_t *string_index, char *dict_fname) {
       maxlines *= 2;
     }
   }
+  // printf("number of reallocations:%zu\n",ral_count );
 
   if (fp)fclose(fp);
   if (read_line)free(read_line);
