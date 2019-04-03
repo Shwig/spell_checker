@@ -1,5 +1,5 @@
-CFLAGS = -g -std=c99 -lpthread -Wall -Wextra -Werror -Wno-unused 
-objects = spell.o
+CFLAGS = -g -std=c99 -lpthread -Wall -Wextra -Werror
+objects = spell.o spell_utils.o
 
 print_list : $(objects)
 	cc -o a $(CFLAGS) $(objects)

@@ -1,9 +1,8 @@
 # Spell Checker
 
-One Paragraph of project description goes here
+Socket programming exercise
+spell checking server using pthreads  
 
 ## Built With
 
 C
-
-

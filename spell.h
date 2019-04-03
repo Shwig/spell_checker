@@ -1,15 +1,14 @@
 #ifndef SPELL_H
 #define SPELL_H
 
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <stddef.h>
 
+#define MAXLINES 1024
+
+char **read_dictionary(size_t *line_index, char **word_list, char **argv);
 
 #endif
