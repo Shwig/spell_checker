@@ -4,7 +4,7 @@ int main(int argc, char **argv) {
 
   /* Check for command line args */
   if (argc == 1) {
-    argv[1] = "words"; /* words is the default dictionary file */
+    argv[1] = DEFAULT_DICTIONARY; /* use the default dictionary file */
   }
   if (argc > 2) {
     fprintf(stderr, "Spell_Checker only takes 0 or 1"
@@ -16,7 +16,13 @@ int main(int argc, char **argv) {
   size_t line_index = 0;      /* index for number of lines in the dictionary FILE */
 
   /* read_dictionary */
-  word_list = read_dictionary(word_list, &line_index, argv[1]);
+  // word_list = read_dictionary(word_list, &line_index, argv[1]);
+  line_index = read_dictionary(&word_list, argv[1]);
+
+  if (!word_list) {
+    printf("Word list is empty \n");
+    return EXIT_FAILURE;
+  }
 
   /* display all words in the word list */
   // for (size_t j = 0; j < line_index; j++) {
@@ -32,7 +38,6 @@ int main(int argc, char **argv) {
       break;
     }
   }
-
 
   /* free back to heap */
   for (size_t i = 0; i < line_index; i++) {
