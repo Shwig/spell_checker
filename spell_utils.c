@@ -1,9 +1,5 @@
 #include "spell.h"
 
-#define FILE_ERR -1
-#define CALLOC_ERR -2
-#define REALLOC_ERR -3
-
 /* read_dictionary takes in the reference to a NULL string that will be used to
   store the contents of the dictionary file, and the name of the dictionary text
   file to be coppied. string pointers are dynamically allocated based on the
@@ -25,13 +21,13 @@ int read_dictionary(char ***string, char *dict_fname) {
   /* if fopen returns null file not found*/
   if ((fp = fopen (dict_fname, "r")) == NULL) {
     fprintf(stderr, "File not found err: check that '%s' exist at directory", dict_fname);
-    return FILE_ERR;
+    return 0;
   }
 
   /* allocate enough pointers for lines in default dictionary file */
   if ((*string = calloc(MAXLINES, sizeof **string)) == NULL) {
     fprintf(stderr, "err: Calloc failed");
-    return CALLOC_ERR;
+    return 0;
   }
 
   while ((char_count = getline(&read_line, &buff_size, fp)) != -1) {
@@ -49,7 +45,7 @@ int read_dictionary(char ***string, char *dict_fname) {
       // ral_count++;
       if (temp == NULL) {
         fprintf(stderr, "err: Reallocation failed");
-        return REALLOC_ERR;
+        return 0;
       }
       *string = temp;
       maxlines *= 2;

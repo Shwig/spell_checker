@@ -1,5 +1,5 @@
-CFLAGS = -g -std=c99 -lpthread -pthread -Wall -Wextra -Werror
-objects = spell.o spell_utils.o
+CFLAGS = -g -std=gnu99 -lpthread -pthread -Wall -Wextra -Werror
+objects = spell.o spell_utils.o socket_utils.o
 
 print_list : $(objects)
 	cc -o a $(CFLAGS) $(objects)

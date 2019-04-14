@@ -1,42 +1,102 @@
 #include "spell.h"
+#include "socket_utils.h"
 
 int main(int argc, char **argv) {
 
-  /* Check for command line args */
-  if (argc == 1) {
-    argv[1] = DEFAULT_DICTIONARY; /* use the default dictionary file */
-  }
-  if (argc > 2) {
-    fprintf(stderr, "Spell_Checker only takes 0 or 1"
-    " command line args! Use: %s <filename>\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
   char **word_list = NULL;    /* an array to hold a copy of the dictionary FILE */
+  char *dfile_name;           /* dictionary file name */
   size_t line_index = 0;      /* index for number of lines in the dictionary FILE */
 
-  /* read_dictionary */
-  // word_list = read_dictionary(word_list, &line_index, argv[1]);
-  line_index = read_dictionary(&word_list, argv[1]);
+  int listenfd , connectedfd;// , *new_sock;
+  struct sockaddr_in client;
+  socklen_t client_addr_size;
+  char line[MAX_LINE];
+  char *message;
+  char *port;
 
-  if (!word_list) {
-    printf("Word list is empty \n");
+  // char *test = "hello";
+  int nums = 0;
+  // char string[MAX_LINE];
+
+
+  /* cmd line arg error checking */
+  if (argc > 3) {
+    fprintf(stderr, "Input Error!\nSpell_Checker only takes 0 or 2"
+    " command line args! Use: %s <file> <port>\n", argv[0]);
     return EXIT_FAILURE;
   }
 
-  /* display all words in the word list */
-  // for (size_t j = 0; j < line_index; j++) {
-  //   printf("%s\n", word_list[j] );
-  // }
+  /* Check for command line args */
+  if (argc < 3) {
+    dfile_name = DEFAULT_DICTIONARY;
+    port = DEFAULT_PORT;
+  } else {
+    dfile_name = argv[1];
+    port = argv[2];
+  }
 
-  char test[15];
-  strcpy(test, "zoologist's");
-  for (size_t j = 0; j < line_index; j++) {
+  /* read_dictionary */
+  if (!(line_index = read_dictionary(&word_list, dfile_name))) {
+    printf("Allocation Error during dictionary file read\n");
+    return EXIT_FAILURE;
+  }
 
-    if(!strcmp(test, word_list[j])){
-      printf("string found %s at index [%zu] \n", word_list[j], j );
-      break;
+  listenfd = getlistenfd(port);
+
+  //Accept and incoming connection
+  puts("Waiting for incoming connections...");
+  client_addr_size = sizeof(struct sockaddr_in);
+  while( (connectedfd = accept(listenfd, (struct sockaddr *)&client, &client_addr_size)) ) {
+    puts("Connection accepted");
+
+    //Reply to the client
+    message = "Pleas eneter word you would like to spell check: ";
+    write(connectedfd , message , strlen(message));
+
+
+    while ((readLine(connectedfd, line, MAX_LINE-1))>0) {
+
+      printf("Searching Dictionary for: %s", line);
+      write(connectedfd, message, strlen(message));
+
+      nums = strcspn(line, "\n");
+      char string[nums];
+
+      strncpy(string,line, nums-1);
+      string[nums-1] = '\0';
+
+      for (size_t j = 0; j < line_index; j++) {
+        // printf("%s\n", word_list[j] );
+        if(!strcmp(string, word_list[j])){
+          message = "\nWord spelled correctly";
+          printf("%s\n",message );
+          write(connectedfd , message , strlen(message));
+          message = "Enter another word: ";
+          break;
+        }
+      }
     }
+
+    printf("%s", line);
+    printf("connection closed\n");
+    close(connectedfd);
+
+    // pthread_t sniffer_thread;
+    // new_sock = malloc(1);
+    // *new_sock = connectedfd;
+    //
+    // if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0)	{
+    //   perror("could not create thread");
+    //   return 1;
+    // }
+
+    //Now join the thread , so that we dont terminate before the thread
+    //pthread_join( sniffer_thread , NULL);
+    // puts("Handler assigned");
+    if (connectedfd<0)	{
+  		perror("accept failed");
+  		return EXIT_FAILURE;
+  	}
   }
 
   /* free back to heap */
