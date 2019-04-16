@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
     while ((readLine(connectedfd, line, MAX_LINE-1))>0) {
 
       printf("Searching Dictionary for: %s", line);
+      message = "searching...\n\n";
       write(connectedfd, message, strlen(message));
 
       nums = strcspn(line, "\n");
@@ -68,10 +69,10 @@ int main(int argc, char **argv) {
       for (size_t j = 0; j < line_index; j++) {
         // printf("%s\n", word_list[j] );
         if(!strcmp(string, word_list[j])){
-          message = "\nWord spelled correctly";
-          printf("%s\n",message );
+          puts("Word spelled correctly");
+          // write(connectedfd , message , strlen(message));
+          message = "word spelled correct\nEnter another word: ";
           write(connectedfd , message , strlen(message));
-          message = "Enter another word: ";
           break;
         }
       }
