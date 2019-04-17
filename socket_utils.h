@@ -13,9 +13,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
-#include<pthread.h> //for threading , link with lpthread
+#include <pthread.h> //for threading , link with lpthread
 
-#define BACKLOG 10
+#define NUM_WORKERS 50
 #define DEFAULT_PORT "50000"
 
 #define EXIT_USAGE_ERROR 1

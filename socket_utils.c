@@ -122,7 +122,7 @@ int getlistenfd(char *port) {
     exit(EXIT_BIND_FAILURE);
   }
 
-  if (listen(listenfd, BACKLOG)<0) {
+  if (listen(listenfd, NUM_WORKERS)<0) {
     close(listenfd);
     exit(EXIT_LISTEN_FAILURE);
   }
