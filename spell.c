@@ -5,7 +5,7 @@ int main(int argc, char **argv) {
 
   char **word_list = NULL;    /* an array to hold a copy of the dictionary FILE */
   char *dfile_name;           /* dictionary file name */
-  size_t line_index = 0;      /* index for number of lines in the dictionary FILE */
+  size_t word_index = 0;      /* index for number of lines in the dictionary FILE */
 
   int listenfd , connectedfd;// , *new_sock;
   struct sockaddr_in client;
@@ -14,9 +14,7 @@ int main(int argc, char **argv) {
   char *message;
   char *port;
 
-  // char *test = "hello";
-  int nums = 0;
-  // char string[MAX_LINE];
+  size_t totRead;
 
 
   /* cmd line arg error checking */
@@ -36,12 +34,13 @@ int main(int argc, char **argv) {
   }
 
   /* read_dictionary */
-  if (!(line_index = read_dictionary(&word_list, dfile_name))) {
-    printf("Allocation Error during dictionary file read\n");
+  if (!(word_index = read_dictionary(&word_list, dfile_name))) {
+    printf("Memory allocation Error during dictionary file read\n");
     return EXIT_FAILURE;
   }
 
   listenfd = getlistenfd(port);
+
 
   //Accept and incoming connection
   puts("Waiting for incoming connections...");
@@ -49,36 +48,52 @@ int main(int argc, char **argv) {
   while( (connectedfd = accept(listenfd, (struct sockaddr *)&client, &client_addr_size)) ) {
     puts("Connection accepted");
 
-    //Reply to the client
-    message = "Pleas eneter word you would like to spell check: ";
+    //Greet  client
+    message = "  Welcome to the Spellcheck server!\nEneter a word to check: ";
     write(connectedfd , message , strlen(message));
 
+    while ((totRead = readLine(connectedfd, line, MAX_LINE-1))>0) {
 
-    while ((readLine(connectedfd, line, MAX_LINE-1))>0) {
+      if (totRead < 3) {
+        message = "\nPlease enter a valid word! >> ";
+        if (write(connectedfd , message , strlen(message)) < 0) {
+          puts("\n   ***Socket Write Failure!!!");
+          return EXIT_FAILURE;
+        }
+        continue;
+      }
 
-      printf("Searching Dictionary for: %s", line);
-      message = "searching...\n\n";
-      write(connectedfd, message, strlen(message));
+      line[totRead-2] = '\0';   // remove line breaks from input
 
-      nums = strcspn(line, "\n");
-      char string[nums];
+      message = "\n  searching...\n";
+      if (write(connectedfd , message , strlen(message)) < 0) {
+        puts("\n   ***Socket Write Failure!!!");
+        return EXIT_FAILURE;
+      }
 
-      strncpy(string,line, nums-1);
-      string[nums-1] = '\0';
-
-      for (size_t j = 0; j < line_index; j++) {
-        // printf("%s\n", word_list[j] );
-        if(!strcmp(string, word_list[j])){
-          puts("Word spelled correctly");
-          // write(connectedfd , message , strlen(message));
-          message = "word spelled correct\nEnter another word: ";
-          write(connectedfd , message , strlen(message));
+      int w_found = 0;
+      printf("\nSearching Dictionary for: %s", line);
+      for (size_t j = 0; j < word_index; j++) {
+        if(!strcmp(line, word_list[j])){
+          w_found = 1;
+          printf("\n  Word found at dict_index: %zd\n  responding to socket...\n",j);
+          message = "  Word spelled correct!\n\nEnter another word: ";
           break;
         }
       }
-    }
 
-    printf("%s", line);
+      if (!w_found) {
+        puts("\n  *Word not found*\n  responding to socket...");
+        message = "  *Sorry word not found in Spell_serv Dictionary file*\n\nEnter another word: ";
+      }
+
+      if (write(connectedfd , message , strlen(message)) < 0) {
+        puts("\n   ***Socket Write Failure!!!");
+        return EXIT_FAILURE;
+      }
+      puts("  write sucess...\n  awaiting next input...");
+
+    }
     printf("connection closed\n");
     close(connectedfd);
 
@@ -101,7 +116,7 @@ int main(int argc, char **argv) {
   }
 
   /* free back to heap */
-  for (size_t i = 0; i < line_index; i++) {
+  for (size_t i = 0; i < word_index; i++) {
     free(word_list[i]);
   }
   free(word_list);

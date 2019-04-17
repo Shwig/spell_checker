@@ -16,7 +16,7 @@
 #include<pthread.h> //for threading , link with lpthread
 
 #define BACKLOG 10
-#define DEFAULT_PORT "55555"
+#define DEFAULT_PORT "50000"
 
 #define EXIT_USAGE_ERROR 1
 #define EXIT_GETADDRINFO_ERROR 2
